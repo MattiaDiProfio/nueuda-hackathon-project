@@ -8,8 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.Column;
 
 /*
@@ -30,15 +29,15 @@ import jakarta.persistence.Column;
 public class Stock {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
-    private Long ID;
-
-    @Column(name = "ticker", unique = true, nullable = false)
-    private String ticker;
+    @Column(name = "ticker")
+    private String ticker; // since ticker symbols are unique, we can use them as the primary key in our Stocks table
 
     @Min(value = (long) 0.01, message = "price cannot be less than $0.01")
     @Column(name = "price", nullable = false)
     private Double price;
+
+    @NotBlank(message = "company name cannot be blank")
+    @Column(name = "companyName", nullable = false)
+    private String name;
 
 }
