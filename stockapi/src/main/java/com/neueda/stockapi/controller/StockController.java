@@ -41,6 +41,8 @@ public class StockController {
     @GetMapping("/filter")
     public ResponseEntity<Object> filterStocks(@Valid @RequestBody FilterRequest payload, BindingResult result) {
 
+        if (payload.getMin() > payload.getMax()) result.rejectValue("min", "", "Invalid range provided. Ensure min < max");
+
         // the messages thrown in the FilterRequest class will be caught and formatted here
         if (result.hasErrors()) {
             List<String> errors = new ArrayList<>();
