@@ -34,10 +34,13 @@ public class StockServiceImpl implements StockService {
     public Stock updateStock(Stock stock) {
         Stock fetchedStock = getStockByTicker(stock.getTicker());
         fetchedStock.setPrice(stock.getPrice()); // only update the price for now, we can allow to change the stock name later on as well
+        fetchedStock.setCompanyName(stock.getCompanyName());
         return stockRepository.save(fetchedStock);
     }
 
     public void deleteStock(String stockTicker) {
+        // check that the stock exists first - if not then an exception will be thrown
+        getStockByTicker(stockTicker);
         stockRepository.deleteByTicker(stockTicker);
     }
 
