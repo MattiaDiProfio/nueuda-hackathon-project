@@ -38,6 +38,6 @@ public class Stock {
 
     @NotBlank(message = "company name cannot be blank")
     @Column(name = "companyName", nullable = false)
-    private String name;
+    private String companyName;
 
 }
