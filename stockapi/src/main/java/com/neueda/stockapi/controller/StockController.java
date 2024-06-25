@@ -29,17 +29,17 @@ public class StockController {
     }
 
     @GetMapping("/{stockTicker}")
-    public ResponseEntity<Stock> getStockByTicker(@PathVariable String stockTicker) {
+    public ResponseEntity<Stock> getStockByTicker(@PathVariable String stockTicker) { 
         return new ResponseEntity<>(stockService.getStockByTicker(stockTicker), HttpStatus.OK);
     }
 
     // return all stocks with price between min, max specified in request payload
-    @GetMapping("/stock/filter")
+    @GetMapping("/filter")
     public ResponseEntity<List<Stock>> filterStocks(@Valid @RequestBody FilterRequest payload) {
         return new ResponseEntity<>(stockService.filterStocks(payload), HttpStatus.OK);
     }
 
-    @PostMapping("/") 
+    @PostMapping 
     public ResponseEntity<Stock> createStock(@Valid @RequestBody Stock payload) {
         return new ResponseEntity<>(stockService.createStock(payload), HttpStatus.CREATED);
     }
@@ -53,7 +53,7 @@ public class StockController {
     @DeleteMapping("/{stockTicker}") 
     public ResponseEntity<HttpStatus> deleteStock(@PathVariable String stockTicker) {
         stockService.deleteStock(stockTicker);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }
