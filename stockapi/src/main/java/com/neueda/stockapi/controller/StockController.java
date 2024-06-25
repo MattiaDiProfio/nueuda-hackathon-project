@@ -2,7 +2,10 @@ package com.neueda.stockapi.controller;
 
 
 import org.springframework.http.*;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import com.neueda.stockapi.exception.ErrorResponse;
 
 import com.neueda.stockapi.entity.FilterRequest;
 import com.neueda.stockapi.entity.Stock;
@@ -10,8 +13,9 @@ import com.neueda.stockapi.service.StockService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.List;
-import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @RestController
@@ -35,18 +39,43 @@ public class StockController {
 
     // return all stocks with price between min, max specified in request payload
     @GetMapping("/filter")
-    public ResponseEntity<List<Stock>> filterStocks(@Valid @RequestBody FilterRequest payload) {
+    public ResponseEntity<Object> filterStocks(@Valid @RequestBody FilterRequest payload, BindingResult result) {
+
+        // the messages thrown in the FilterRequest class will be caught and formatted here
+        if (result.hasErrors()) {
+            List<String> errors = new ArrayList<>();
+            result.getAllErrors().forEach((error) -> errors.add(error.getDefaultMessage())); 
+            ErrorResponse error = new ErrorResponse(errors);  
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(stockService.filterStocks(payload), HttpStatus.OK);
     }
 
     @PostMapping 
-    public ResponseEntity<Stock> createStock(@Valid @RequestBody Stock payload) {
+    public ResponseEntity<Object> createStock(@Valid @RequestBody Stock payload, BindingResult result) {
+
+        if (result.hasErrors()) {
+            List<String> errors = new ArrayList<>();
+            result.getAllErrors().forEach((error) -> errors.add(error.getDefaultMessage())); 
+            ErrorResponse error = new ErrorResponse(errors);  
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(stockService.createStock(payload), HttpStatus.CREATED);
     }
 
     // update the price of a stock given its ticker symbol
-    @PutMapping("/{stockTicker}")
-    public ResponseEntity<Stock> updateStock(@Valid @RequestBody Stock payload) {
+    @PutMapping
+    public ResponseEntity<Object> updateStock(@Valid @RequestBody Stock payload, BindingResult result) {
+
+        if (result.hasErrors()) {
+            List<String> errors = new ArrayList<>();
+            result.getAllErrors().forEach((error) -> errors.add(error.getDefaultMessage())); 
+            ErrorResponse error = new ErrorResponse(errors);  
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<>(stockService.updateStock(payload), HttpStatus.CREATED);
     }
 

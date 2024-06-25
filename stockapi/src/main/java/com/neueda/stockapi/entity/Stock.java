@@ -29,7 +29,8 @@ import jakarta.persistence.Column;
 public class Stock {
 
     @Id
-    @Column(name = "ticker")
+    @NotBlank(message = "stock ticker symbol cannot be blank")
+    @Column(name = "ticker", nullable = false)
     private String ticker; // since ticker symbols are unique, we can use them as the primary key in our Stocks table
 
     @Min(value = (long) 0.01, message = "price cannot be less than $0.01")
