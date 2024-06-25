@@ -38,10 +38,11 @@ public class StockServiceImpl implements StockService {
         return stockRepository.save(fetchedStock);
     }
 
-    public void deleteStock(String stockTicker) {
+    public Stock deleteStock(String stockTicker) {
         // check that the stock exists first - if not then an exception will be thrown
-        getStockByTicker(stockTicker);
+        Stock fetchedStock = getStockByTicker(stockTicker);
         stockRepository.deleteByTicker(stockTicker);
+        return fetchedStock;
     }
 
     /* 

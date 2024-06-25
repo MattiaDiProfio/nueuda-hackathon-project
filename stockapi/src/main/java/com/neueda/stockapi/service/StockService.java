@@ -12,5 +12,5 @@ public interface StockService {
     Stock getStockByTicker(String stockTicker);
     Stock createStock(Stock stock);
     Stock updateStock(Stock stock);
-    void deleteStock(String stockTicker);
+    Stock deleteStock(String stockTicker);
 }

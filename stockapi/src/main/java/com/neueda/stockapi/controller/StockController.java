@@ -82,9 +82,8 @@ public class StockController {
     }
 
     @DeleteMapping("/{stockTicker}") 
-    public ResponseEntity<HttpStatus> deleteStock(@PathVariable String stockTicker) {
-        stockService.deleteStock(stockTicker);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<Object> deleteStock(@PathVariable String stockTicker) {
+        return new ResponseEntity<>(stockService.deleteStock(stockTicker), HttpStatus.NO_CONTENT);
     }
 
 }
