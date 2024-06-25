@@ -1,6 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, HTML, CSS">
-    <title>Stock Analysis</title>
+<!-- Enforce page to be full width --!>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Citi US Stock Analysis</title>
+<!-- Script Includes Axios ??? -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
+    <body>
+    <main>
+        <!-- Dropdown List in Form -->
+        <form action="/your-submit-endpoint" method="post">
+            <label for="stock-select">Choose a stock:</label>
+            <select id="stock-select" name="stock">
+                <!-- Options will be populated by JavaScript -->
+            </select>
+            <button type="submit">Submit</button>
+        </form>
+    
+        <script>
+            // Function to fetch stock data and populate dropdown
+            function fetchStocks() {
+                axios.get('/api/stocks')
+                    .then(response => {
+                        const stocks = response.data;
+                        const select = document.getElementById('stock-select');
+                        
+                        stocks.forEach(stock => {
+                            const option = document.createElement('option');
+                            option.value = stock.ticker;
+                            option.textContent = `${stock.name} (${stock.ticker}) - $${stock.price}`;
+                            select.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching stock data:', error);
+                    });
+            }
+    
+            // Call fetchStocks when the page loads
+            window.onload = fetchStocks;
+        </script>
+    </main>
+    <footer>Created by Harry Davey, Mattia Di Profio, Clarine Rafferty Tanusubekti, Rajan Chandale</footer>
+    </body>
+</html>
