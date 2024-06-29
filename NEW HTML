@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group 5 - Stock API</title>
+<!-- Include Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .section {
+        margin-bottom: 20px;
+    }
+    .section h2 {
+        margin-bottom: 10px;
+    }
+    .section form {
+        margin-bottom: 10px;
+    }
+</style>
+</head>
+<body>
+<main>
+    <div class="section">
+        <h2>Get Individual Stock</h2>
+        <form id="get-stock-form">
+            <label for="get-stock-ticker">Ticker:</label>
+            <input type="text" id="get-stock-ticker" required>
+            <button type="submit">Get Stock</button>
+        </form>
+        <pre id="get-stock-result"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Get All Stocks</h2>
+        <button id="get-all-stocks">Get All Stocks</button>
+        <pre id="all-stocks-result"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Get Stocks by Price Range</h2>
+        <form id="filter-stocks-form">
+            <label for="min-price">Min Price:</label>
+            <input type="number" id="min-price" step="0.01" required>
+            <label for="max-price">Max Price:</label>
+            <input type="number" id="max-price" step="0.01" required>
+            <button type="submit">Filter Stocks</button>
+        </form>
+        <pre id="filter-stocks-result"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Create New Stock</h2>
+        <form id="create-stock-form">
+            <label for="new-ticker">Ticker:</label>
+            <input type="text" id="new-ticker" required>
+            <label for="new-price">Price:</label>
+            <input type="number" id="new-price" step="0.01" required>
+            <label for="new-company">Company Name:</label>
+            <input type="text" id="new-company" required>
+            <button type="submit">Create Stock</button>
+        </form>
+        <pre id="create-stock-result"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Edit Existing Stock</h2>
+        <form id="edit-stock-form">
+            <label for="edit-ticker">Ticker:</label>
+            <input type="text" id="edit-ticker" required>
+            <label for="edit-price">New Price:</label>
+            <input type="number" id="edit-price" step="0.01" required>
+            <label for="edit-company">New Company Name:</label>
+            <input type="text" id="edit-company" required>
+            <button type="submit">Edit Stock</button>
+        </form>
+        <pre id="edit-stock-result"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Delete Stock</h2>
+        <form id="delete-stock-form">
+            <label for="delete-ticker">Ticker:</label>
+            <input type="text" id="delete-ticker" required>
+            <button type="submit">Delete Stock</button>
+        </form>
+        <pre id="delete-stock-result"></pre>
+    </div>
+
+    <script>
+        // Axios instance
+        const axiosInstance = axios.create({
+            baseURL: 'http://localhost:8080',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        // Get Individual Stock
+        document.getElementById('get-stock-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const ticker = document.getElementById('get-stock-ticker').value;
+            axiosInstance.get(`/stock/${ticker}`)
+                .then(response => {
+                    document.getElementById('get-stock-result').textContent = JSON.stringify(response.data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('get-stock-result').textContent = error.message;
+                });
+        });
+
+        // Get All Stocks
+        document.getElementById('get-all-stocks').addEventListener('click', function() {
+            axiosInstance.get('/stock/all')
+                .then(response => {
+                    document.getElementById('all-stocks-result').textContent = JSON.stringify(response.data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('all-stocks-result').textContent = error.message;
+                });
+        });
+
+        // Get Stocks by Price Range
+        document.getElementById('filter-stocks-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const minPrice = document.getElementById('min-price').value;
+            const maxPrice = document.getElementById('max-price').value;
+            axiosInstance.get('/stock/filter', { params: { min: minPrice, max: maxPrice } })
+                .then(response => {
+                    document.getElementById('filter-stocks-result').textContent = JSON.stringify(response.data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('filter-stocks-result').textContent = error.message;
+                });
+        });
+
+        // Create New Stock
+        document.getElementById('create-stock-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const newStock = {
+                ticker: document.getElementById('new-ticker').value,
+                price: document.getElementById('new-price').value,
+                companyName: document.getElementById('new-company').value
+            };
+            axiosInstance.post('/stock', newStock)
+                .then(response => {
+                    document.getElementById('create-stock-result').textContent = JSON.stringify(response.data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('create-stock-result').textContent = error.message;
+                });
+        });
+
+        // Edit Existing Stock
+        document.getElementById('edit-stock-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const editStock = {
+                ticker: document.getElementById('edit-ticker').value,
+                price: document.getElementById('edit-price').value,
+                companyName: document.getElementById('edit-company').value
+            };
+            axiosInstance.put('/stock', editStock)
+                .then(response => {
+                    document.getElementById('edit-stock-result').textContent = JSON.stringify(response.data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('edit-stock-result').textContent = error.message;
+                });
+        });
+
+        // Delete Stock
+        document.getElementById('delete-stock-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const ticker = document.getElementById('delete-ticker').value;
+            axiosInstance.delete(`/stock/${ticker}`)
+                .then(response => {
+                    document.getElementById('delete-stock-result').textContent = 'Stock deleted successfully';
+                })
+                .catch(error => {
+                    document.getElementById('delete-stock-result').textContent = error.message;
+                });
+        });
+    </script>
+</main>
+</body>
+</html>
