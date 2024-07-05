@@ -44,41 +44,33 @@ public class StockController {
         if (payload.getMin() > payload.getMax()) result.rejectValue("min", "", "Invalid range provided. Ensure min < max");
 
         // the messages thrown in the FilterRequest class will be caught and formatted here
-        if (result.hasErrors()) {
-            List<String> errors = new ArrayList<>();
-            result.getAllErrors().forEach((error) -> errors.add(error.getDefaultMessage())); 
-            ErrorResponse error = new ErrorResponse(errors);  
-            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-        }
+        ResponseEntity<Object> error = handleInvalidPayload(result);
+        if (error != null) return error;
 
         return new ResponseEntity<>(stockService.filterStocks(payload), HttpStatus.OK);
     }
 
     @PostMapping 
     public ResponseEntity<Object> createStock(@Valid @RequestBody Stock payload, BindingResult result) {
-
-        if (result.hasErrors()) {
-            List<String> errors = new ArrayList<>();
-            result.getAllErrors().forEach((error) -> errors.add(error.getDefaultMessage())); 
-            ErrorResponse error = new ErrorResponse(errors);  
-            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<>(stockService.createStock(payload), HttpStatus.CREATED);
+        ResponseEntity<Object> error = handleInvalidPayload(result);
+        return error == null ? new ResponseEntity<>(stockService.createStock(payload), HttpStatus.CREATED) : error;
     }
 
     // update the price of a stock given its ticker symbol
     @PutMapping
     public ResponseEntity<Object> updateStock(@Valid @RequestBody Stock payload, BindingResult result) {
+        ResponseEntity<Object> error = handleInvalidPayload(result);
+        return error == null ? new ResponseEntity<>(stockService.updateStock(payload), HttpStatus.CREATED) : error;
+    }
 
+    private ResponseEntity<Object> handleInvalidPayload(BindingResult result) {
         if (result.hasErrors()) {
             List<String> errors = new ArrayList<>();
-            result.getAllErrors().forEach((error) -> errors.add(error.getDefaultMessage())); 
-            ErrorResponse error = new ErrorResponse(errors);  
+            result.getAllErrors().forEach((error) -> errors.add(error.getDefaultMessage()));
+            ErrorResponse error = new ErrorResponse(errors);
             return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
-
-        return new ResponseEntity<>(stockService.updateStock(payload), HttpStatus.CREATED);
+        return null;
     }
 
     @DeleteMapping("/{stockTicker}") 
